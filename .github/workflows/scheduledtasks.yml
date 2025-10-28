@@ -1,4 +1,4 @@
-name: Daily Automated Tests
+name: schedule Automated Tests
 
 on:
   schedule:

@@ -1,0 +1,51 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Security Check with npm audit
+        run: npm audit --audit-level=high
+
+      # ✅ POST SUCCESS COMMENT
+      - name: Add PR comment (Success Message)
+        if: success()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            Automated Code Review Passed.
+            - ESLint checks passed
+            - No high-risk vulnerabilities detected
+
+      # ❌ POST FAILURE COMMENT
+      - name: Add PR comment (Failure Message)
+        if: failure()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            Automated Code Review Failed.
+            Please fix issues reported by:
+            - ESLint
+            - npm audit
