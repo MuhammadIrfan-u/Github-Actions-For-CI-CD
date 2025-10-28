@@ -6,7 +6,8 @@
   "main": "run.js",
   "scripts": {
     "start": "node run.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
@@ -30,6 +31,10 @@
     "node": ">=12.10.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-jest": "^29.0.1",
+    "globals": "^16.4.0",
     "jest": "^30.2.0"
   }
 }
