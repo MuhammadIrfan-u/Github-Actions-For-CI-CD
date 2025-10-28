@@ -1,0 +1,56 @@
+name: dependency-update
+
+on:
+  schedule:
+    - cron: '0 3 * * *'         # Every day at 08:00 Pakistan Time (03:00 UTC)
+  workflow_dispatch:            # Allow manual run from Actions tab
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm-check-updates
+        run: npm install -g npm-check-updates@latest
+
+      - name: Display current dependency status
+        run: npm outdated || true
+
+      - name: Update package.json
+        run: |
+          ncu --target minor -u
+          cat package.json
+
+      - name: Install dependencies & update lockfile
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        env:
+          CI: true
+
+      - name: Commit changes and create PR
+        if: success()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update npm dependencies"
+          branch: "deps/update-${{ github.run_id }}"
+          title: "chore(deps): automated dependency updates"
+          body: |
+            This PR updates package.json and the lockfile. CI tests have passed.
+          labels: dependency, automated
