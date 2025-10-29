@@ -73,7 +73,7 @@ jobs:
 
 ## 🧭 Understanding the Workflow (Breakpoint)
 
-The following sections break down the above YAML file into smaller parts for easier understanding.
+following sections break down the above YAML file into smaller parts for easier understanding.
 
 ---
 
