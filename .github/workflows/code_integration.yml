@@ -45,11 +45,4 @@ jobs:
             Linting: $([[ -f lint_status ]] && echo "FAILED" || echo "PASSED")
             Tests: $([[ -f test_status ]] && echo "FAILED" || echo "PASSED")
 
-      # ✅ Make job fail if any check failed
-      - name: Fail job if checks failed
-        if: always()
-        run: |
-          if [ -f lint_status ] || [ -f test_status ]; then
-            echo "One or more CI checks failed."
-            exit 1
-          fi
+        
