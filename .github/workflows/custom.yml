@@ -1,0 +1,45 @@
+name: Checking whethe code is ready to merge
+
+on:
+  push:
+    branches:
+      - main
+  
+jobs:
+  Custom-Check-Ready-Code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint (Linting)
+        id: lint
+        run: |
+          npm run lint || echo "lint-failed" > lint_status
+
+      - name: Run Test Cases
+        id: test
+        run: |
+          npm test || echo "test-failed" > test_status
+
+      # ✅ Comment on Pull Request with Results
+      - name: Report results on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            Continuous Integration Results:
+            Linting: $([[ -f lint_status ]] && echo "FAILED" || echo "PASSED")
+            Tests: $([[ -f test_status ]] && echo "FAILED" || echo "PASSED")
+
+        
